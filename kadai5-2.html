@@ -1,20 +1,31 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
-    <title>演習課題5-2：外部APIの呼び出しテスト</title>
+    <title>演習課題5-2：天気APIの呼び出しテスト</title>
 </head>
 <body>
-    <h1 id="msg">何かのAPI</h1>
+    <h1 id="msg">天気情報</h1>
     <form name="apiform"><p>
-        何かのフォーム：<input type="text" name="form_data">
-        <button type="button" id="btn1" onclick="some_api(this.form)">実行</button>
+        都市名：<input type="text" name="form_data">
+        <button type="button" onclick="some_api(this.form)">実行</button>
     </p></form>
     
-    <div id="result"></div>
+    <pre id="result" style="background: #f0f0f0; padding: 1em;"></pre>
+
     <script>
         async function some_api(myForm) {
-            // ここにコードを書く
-            document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
+            const city = myForm.form_data.value.trim();
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = "取得中...";
+
+            try {
+                const response = await fetch(`https://wttr.in/${encodeURIComponent(city)}?format=3`);
+                const text = await response.text();
+                resultDiv.textContent = text;
+            } catch (error) {
+                resultDiv.textContent = "エラー: " + error.message;
+            }
+
             document.apiform.reset();
         }
     </script>
